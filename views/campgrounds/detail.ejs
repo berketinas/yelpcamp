@@ -4,11 +4,12 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Show</title>
     </head>
     <body>
         <h1>Showing campground</h1>
         <p><%= campground.title %> - <b><%= campground.location %> </b></p>
+        <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
         <footer>
             <a href="/campgrounds">All campgrounds</a>
         </footer>

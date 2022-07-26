@@ -25,5 +25,6 @@ module.exports = {
     'linebreak-style': ['error', 'windows'],
     'no-multi-spaces': ['error', { 'ignoreEOLComments': true }],
     'no-await-in-loop': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
