@@ -75,7 +75,7 @@ app.get('/campgrounds/new', (req, res) => {
 
 app.get('/campgrounds/:id', asyncWrapper(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id);
+    const campground = await Campground.findById(id).populate('reviews', ['body', 'rating']);
     res.render('campgrounds/detail', { campground });
 }));
 
