@@ -28,7 +28,7 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/483251',
             // eslint-disable-next-line
-            description: 'Aliquam eget volutpat dui. Phasellus at libero sollicitudin ex semper maximus. Maecenas justo augue, hendrerit lacinia erat nec, egestas rutrum ante. Phasellus in bibendum nunc, a viverra massa. Sed et congue nulla. Donec volutpat iaculis ipsum nec sollicitudin. Aenean interdum eros eu dolor dapibus ultrices. Donec congue lobortis eros, sed euismod tortor. Cras porta accumsan erat, vitae sodales ipsum pellentesque id. Cras laoreet sagittis facilisis. Curabitur venenatis purus in leo ullamcorper pellentesque. Phasellus ac metus lacinia, consequat mauris dictum, porta tortor. Sed pharetra sodales pellentesque.',
+            description: 'Aliquam eget volutpat dui. Phasellus at libero sollicitudin ex semper maximus. Maecenas justo augue, hendrerit lacinia erat nec, egestas rutrum ante. Phasellus in bibendum nunc, a viverra massa.',
             price: Math.floor(Math.random() * 50) + 10,
         });
         await camp.save();
