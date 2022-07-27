@@ -7,6 +7,7 @@ const engine = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
 const asyncWrapper = require('./utils/asyncWrapper');
 const Campground = require('./models/campground');
+const Review = require('./models/review');
 const { campgroundSchema } = require('./schemas');
 
 mongoose.connect(
@@ -84,6 +85,17 @@ app.get('/campgrounds/:id/edit', asyncWrapper(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/edit', { campground });
+}));
+
+app.post('/campgrounds/:id/reviews', asyncWrapper(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+
+    campground.reviews.push(review);
+
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
 }));
 
 app.all('*', (req, res, next) => {
