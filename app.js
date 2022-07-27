@@ -7,6 +7,7 @@ const engine = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
 const asyncWrapper = require('./utils/asyncWrapper');
 const Campground = require('./models/campground');
+const { campgroundSchema } = require('./schemas');
 
 mongoose.connect(
     'mongodb://localhost:27017/yelp-camp',
@@ -32,6 +33,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
 
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map((item) => item.message).join(', ');
+        return next(new ExpressError(msg, 400));
+    }
+
+    return next();
+};
+
 app.get('/', (req, res) => {
     res.redirect('/campgrounds');
 });
@@ -41,9 +52,7 @@ app.get('/campgrounds', asyncWrapper(async (req, res) => {
     res.render('campgrounds/index', { campgrounds });
 }));
 
-app.post('/campgrounds', asyncWrapper(async (req, res) => {
-    if (!req.body.campground) throw new ExpressError('Invalid Input', 400);
-
+app.post('/campgrounds', validateCampground, asyncWrapper(async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
