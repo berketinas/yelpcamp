@@ -26,5 +26,6 @@ module.exports = {
     'no-multi-spaces': ['error', { 'ignoreEOLComments': true }],
     'no-await-in-loop': 'off',
     'no-underscore-dangle': 'off',
+    'no-param-reassign': 'off',
   },
 };

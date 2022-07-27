@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const engine = require('ejs-mate');
 
+const ExpressError = require('./utils/ExpressError');
 const asyncWrapper = require('./utils/asyncWrapper');
 const Campground = require('./models/campground');
 
@@ -41,6 +42,8 @@ app.get('/campgrounds', asyncWrapper(async (req, res) => {
 }));
 
 app.post('/campgrounds', asyncWrapper(async (req, res) => {
+    if (!req.body.campground) throw new ExpressError('Invalid Input', 400);
+
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -74,9 +77,15 @@ app.get('/campgrounds/:id/edit', asyncWrapper(async (req, res) => {
     res.render('campgrounds/edit', { campground });
 }));
 
+app.all('*', (req, res, next) => {
+    next(new ExpressError('Page Not Found', 404));
+});
+
 // eslint-disable-next-line
 app.use((err, req, res, next) => {
-    res.send('something went wrong.');
+    const { status = 500 } = err;
+    if (!err.message) err.message = 'Something went wrong.';
+    res.status(status).render('error', { err });
 });
 
 app.listen(3000, () => {
