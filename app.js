@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 
 app.get('/', (req, res) => {
-    res.render('home');
+    res.redirect('/campgrounds');
 });
 
 app.get('/campgrounds', async (req, res) => {
