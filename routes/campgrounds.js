@@ -1,6 +1,7 @@
 const express = require('express');
 const asyncWrapper = require('../utils/asyncWrapper');
 const ExpressError = require('../utils/ExpressError');
+const { isLoggedIn } = require('../middleware');
 const { campgroundSchema } = require('../schemas');
 const Campground = require('../models/campground');
 
@@ -21,14 +22,14 @@ router.get('/', asyncWrapper(async (req, res) => {
     res.render('campgrounds/index', { campgrounds });
 }));
 
-router.post('/', validateCampground, asyncWrapper(async (req, res) => {
+router.post('/', isLoggedIn, validateCampground, asyncWrapper(async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     req.flash('success', 'Successfully created new campground.');
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('campgrounds/new');
 });
 
@@ -44,21 +45,21 @@ router.get('/:id', asyncWrapper(async (req, res) => {
     return res.render('campgrounds/detail', { campground });
 }));
 
-router.put('/:id', asyncWrapper(async (req, res) => {
+router.put('/:id', isLoggedIn, asyncWrapper(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     req.flash('success', 'Successfully updated campground.');
     res.redirect(`/campgrounds/${id}`);
 }));
 
-router.delete('/:id', asyncWrapper(async (req, res) => {
+router.delete('/:id', isLoggedIn, asyncWrapper(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted campground.');
     res.redirect('/campgrounds');
 }));
 
-router.get('/:id/edit', asyncWrapper(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, asyncWrapper(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
 
