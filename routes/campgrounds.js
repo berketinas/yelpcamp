@@ -41,7 +41,7 @@ router.get('/:id', asyncWrapper(async (req, res) => {
         return res.redirect('/campgrounds');
     }
 
-    res.render('campgrounds/detail', { campground });
+    return res.render('campgrounds/detail', { campground });
 }));
 
 router.put('/:id', asyncWrapper(async (req, res) => {
@@ -67,7 +67,7 @@ router.get('/:id/edit', asyncWrapper(async (req, res) => {
         return res.redirect('/campgrounds');
     }
 
-    res.render('campgrounds/edit', { campground });
+    return res.render('campgrounds/edit', { campground });
 }));
 
 module.exports = router;
