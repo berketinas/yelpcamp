@@ -30,6 +30,7 @@ const seedDB = async () => {
             // eslint-disable-next-line
             description: 'Aliquam eget volutpat dui. Phasellus at libero sollicitudin ex semper maximus. Maecenas justo augue, hendrerit lacinia erat nec, egestas rutrum ante. Phasellus in bibendum nunc, a viverra massa.',
             price: Math.floor(Math.random() * 50) + 10,
+            author: '62e5634684c529fdc7c50756',
         });
         await camp.save();
     }
