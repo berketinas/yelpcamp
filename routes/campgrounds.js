@@ -5,17 +5,16 @@ const CampgroundController = require('../controllers/campgrounds');
 
 const router = express.Router();
 
-router.get('/', asyncWrapper(CampgroundController.index));
-
-router.post('/', isLoggedIn, validateCampground, asyncWrapper(CampgroundController.create));
+router.route('/')
+    .get(asyncWrapper(CampgroundController.index))
+    .post(isLoggedIn, validateCampground, asyncWrapper(CampgroundController.create));
 
 router.get('/new', isLoggedIn, CampgroundController.renderNew);
 
-router.get('/:id', asyncWrapper(CampgroundController.show));
-
-router.put('/:id', isLoggedIn, isAuthor, validateCampground, asyncWrapper(CampgroundController.edit));
-
-router.delete('/:id', isLoggedIn, isAuthor, asyncWrapper(CampgroundController.delete));
+router.route('/:id')
+    .get(asyncWrapper(CampgroundController.show))
+    .put(isLoggedIn, isAuthor, validateCampground, asyncWrapper(CampgroundController.edit))
+    .delete(isLoggedIn, isAuthor, asyncWrapper(CampgroundController.delete));
 
 router.get('/:id/edit', isLoggedIn, isAuthor, asyncWrapper(CampgroundController.renderEdit));
 

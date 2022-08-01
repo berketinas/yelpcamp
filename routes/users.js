@@ -5,13 +5,13 @@ const UserController = require('../controllers/users');
 
 const router = express.Router();
 
-router.get('/register', UserController.renderRegister);
+router.route('/register')
+    .get(UserController.renderRegister)
+    .post(asyncWrapper(UserController.register));
 
-router.post('/register', asyncWrapper(UserController.register));
-
-router.get('/login', UserController.renderLogin);
-
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), UserController.login);
+router.route('/login')
+    .get(UserController.renderLogin)
+    .post(passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), UserController.login);
 
 router.get('/logout', UserController.logout);
 
