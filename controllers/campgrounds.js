@@ -15,18 +15,19 @@ module.exports.renderNew = (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
-    // const geoData = await geocoder.forwardGeocode({
-    //     query: req.body.campground.location,
-    //     limit: 1,
-    // }).send();
-    // console.log(geoData.body.features);
-    // res.send('done');
+    const geoData = await geocoder.forwardGeocode({
+        query: req.body.campground.location,
+        limit: 1,
+    }).send();
+
     const campground = new Campground(req.body.campground);
 
+    campground.geometry = geoData.body.features[0].geometry;
     campground.author = req.user._id;
     campground.images = req.files.map((file) => ({ url: file.path, filename: file.filename }));
 
     await campground.save();
+    console.log(campground);
     req.flash('success', 'Successfully created new campground.');
     res.redirect(`/campgrounds/${campground._id}`);
 };
