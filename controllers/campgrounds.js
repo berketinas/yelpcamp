@@ -11,7 +11,10 @@ module.exports.renderNew = (req, res) => {
 
 module.exports.create = async (req, res) => {
     const campground = new Campground(req.body.campground);
+
     campground.author = req.user._id;
+    campground.images = req.files.map((file) => ({ url: file.path, filename: file.filename }));
+
     await campground.save();
     req.flash('success', 'Successfully created new campground.');
     res.redirect(`/campgrounds/${campground._id}`);

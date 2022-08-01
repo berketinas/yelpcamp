@@ -3,16 +3,14 @@ const multer = require('multer');
 const asyncWrapper = require('../utils/asyncWrapper');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const CampgroundController = require('../controllers/campgrounds');
+const { storage } = require('../cloudinary');
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage });
 
 router.route('/')
     .get(asyncWrapper(CampgroundController.index))
-    // .post(isLoggedIn, validateCampground, asyncWrapper(CampgroundController.create));
-    .post(upload.array('image'), (req, res) => {
-        res.send(req.files);
-    });
+    .post(isLoggedIn, upload.array('image'), validateCampground, asyncWrapper(CampgroundController.create));
 
 router.get('/new', isLoggedIn, CampgroundController.renderNew);
 
