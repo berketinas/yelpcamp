@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
 
 const ExpressError = require('./utils/ExpressError');
 
@@ -49,6 +50,7 @@ app.use(methodOverride('_method'));
 app.use(mongoSanitize());
 
 const sessionConfig = {
+    name: 'session',
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
@@ -60,6 +62,59 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet());
+
+const scriptUrls = [
+    'https://stackpath.bootstrapcdn.com/',
+    'https://api.tiles.mapbox.com/',
+    'https://api.mapbox.com/',
+    'https://cdnjs.cloudflare.com/',
+    'https://cdn.jsdelivr.net',
+];
+
+const styleUrls = [
+    'https://kit-free.fontawesome.com/',
+    'https://stackpath.bootstrapcdn.com/',
+    'https://api.tiles.mapbox.com/',
+    'https://api.mapbox.com/',
+    'https://fonts.googleapis.com/',
+    'https://use.fontawesome.net',
+    'https://cdn.jsdelivr.net',
+];
+
+const connectUrls = [
+    'https://api.mapbox.com/',
+    'https://a.tiles.mapbox.com/',
+    'https://b.tiles.mapbox.com/',
+    'https://events.mapbox.com/',
+];
+
+const imgUrls = [
+    `https://res.cloudinary.com/${process.env.CLOUDINARY_NAME}/`,
+    'https://images.unsplash.com/',
+    'https://icon-library.com/',
+];
+
+const fontUrls = [];
+
+/* eslint-disable */
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectUrls],
+            scriptSrc: ["'self'", "'unsafe-inline'", ...scriptUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleUrls],
+            workerSrc: ["'self'", 'blob:'],
+            objectSrc: [],
+            imgSrc: ["'self'", 'blob:', 'data:', ...imgUrls],
+            fontSrc: ["'self'", ...fontUrls],
+        },
+    }),
+);
+/* eslint-enable */
+
+app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -71,7 +126,6 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
     if (req.originalUrl !== '/login') req.session.returnTo = req.originalUrl;
 
-    console.log(req.query);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');

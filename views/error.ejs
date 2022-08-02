@@ -6,6 +6,10 @@
                 Error
             </h4>
             <p class="mb-0"><%= err.message %></p>
+            <% if (process.env.NODE_ENV !== 'production') { %>
+                <hr>
+                <p><%= err.stack %> </p>
+            <% } %>
         </div>
     </div>
 </div>
