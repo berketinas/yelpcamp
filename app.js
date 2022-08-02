@@ -14,6 +14,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
+const MongoStore = require('connect-mongo');
 
 const ExpressError = require('./utils/ExpressError');
 
@@ -23,8 +24,14 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
+// const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+const dbUrl = process.env.DB_URL;
+
+// const secret = 'secret';
+const secret = process.env.SECRET;
+
 mongoose.connect(
-    'mongodb://localhost:27017/yelp-camp',
+    dbUrl,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -49,9 +56,17 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(mongoSanitize());
 
+const storeOptions = {
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret,
+    },
+};
+
 const sessionConfig = {
     name: 'session',
-    secret: 'secret',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -59,6 +74,7 @@ const sessionConfig = {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     },
+    store: MongoStore.create(storeOptions),
 };
 app.use(session(sessionConfig));
 app.use(flash());
